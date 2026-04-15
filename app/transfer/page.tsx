@@ -1,5 +1,5 @@
 'use client';
-// THIS IN NOTE FIELD: <img src=x onerror=alert(document.cookie)>
+// THIS IN NOTE FIELD: <img src=x onerror=alert(document.cookie)> give hint of command
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
