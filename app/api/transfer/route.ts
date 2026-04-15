@@ -60,14 +60,14 @@ export async function POST(req: NextRequest) {
     const result: any = await db.query(
       `SELECT id FROM users WHERE UPPER(account_number) = '${toAccount}'`,
     );
-    console.log("RAW DB RESULT:", result);
+    // console.log("RAW DB RESULT:", result);
 
     const rows = result[0] || result;
-    console.log("PROCESSED ROWS:", rows);
+    // console.log("PROCESSED ROWS:", rows);
 
     if (rows.length > 0) {
       const receiverId = rows[0].id;
-      console.log("RECEIVER FOUND:", rows[0]);
+      // console.log("RECEIVER FOUND:", rows[0]);
 
       if (receiverId === decoded.id) {
         return NextResponse.json({
