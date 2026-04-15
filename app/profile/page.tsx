@@ -8,6 +8,23 @@ export default function ProfilePage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
 
+  const [token, setToken] = useState<string | null>(null);
+const [decoded, setDecoded] = useState<any>(null);
+
+useEffect(() => {
+  const t = localStorage.getItem("token");
+  setToken(t);
+
+  if (t) {
+    try {
+      const payload = JSON.parse(atob(t.split(".")[1]));
+      setDecoded(payload);
+    } catch (e) {
+      setDecoded(null);
+    }
+  }
+}, []);
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) { router.push('/login'); return; }
@@ -119,6 +136,58 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
+
+        <div style={{
+  marginTop: 24,
+  background: "white",
+  border: "1px solid #EDEAE4",
+  borderRadius: 24,
+  padding: 32
+}}>
+  <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>
+    🔐 Security Lab: JWT Inspector
+  </h3>
+
+  {token ? (
+    <>
+      <div style={{
+        fontSize: 12,
+        color: "#8A7F6E",
+        marginBottom: 12,
+        wordBreak: "break-all"
+      }}>
+        {token}
+      </div>
+
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: 16
+      }}>
+        <div style={{ background: "#F9F8F6", padding: 16, borderRadius: 12 }}>
+          <strong>Decoded Payload</strong>
+          <pre style={{ fontSize: 12, marginTop: 10 }}>
+            {JSON.stringify(decoded, null, 2)}
+          </pre>
+        </div>
+
+        <div style={{ background: "#FFF7ED", padding: 16, borderRadius: 12 }}>
+          <strong>⚠️ Security Notes</strong>
+          <ul style={{ fontSize: 12, marginTop: 10, lineHeight: 1.6 }}>
+            <li>JWT is not encrypted, only encoded</li>
+            <li>Payload can be read by anyone</li>
+            <li>Server must validate signature</li>
+            <li>Never trust role/permission from frontend</li>
+          </ul>
+        </div>
+      </div>
+    </>
+  ) : (
+    <div style={{ fontSize: 13, color: "#8A7F6E" }}>
+      No token found
+    </div>
+  )}
+</div>
       </main>
 
       <style jsx>{`
