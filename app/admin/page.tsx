@@ -9,7 +9,6 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // No auth check — vulnerability baked in naturally
     fetch('/api/admin/users')
       .then(r => r.json())
       .then(data => { if (data.users) setUsers(data.users); })
@@ -17,73 +16,134 @@ export default function AdminPage() {
   }, []);
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8f7f4', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#F9F8F6', fontFamily: 'Inter, sans-serif', color: '#1A1A1A' }}>
       <Sidebar />
-      <main style={{ flex: 1, padding: '40px 48px', overflowY: 'auto' }}>
-        <div style={{ marginBottom: 32 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <main style={{ flex: 1, padding: '48px 64px', overflowY: 'auto' }}>
+        
+        {/* Header Section */}
+        <div style={{ marginBottom: 40 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <h1 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.6px', marginBottom: 4 }}>Admin panel</h1>
-              <p style={{ fontSize: 14, color: '#8a7f6e' }}>Internal dashboard — manage users and platform activity.</p>
+              <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 8 }}>Admin Panel</h1>
+              <p style={{ fontSize: 16, color: '#70685C' }}>Internal Management Dashboard — oversee user activity and database records.</p>
             </div>
-            <Link href="/admin/logs" style={{ padding: '9px 18px', background: 'white', border: '1px solid #e8e4dc', borderRadius: 8, fontSize: 13, fontWeight: 500, color: '#1a1a1a', textDecoration: 'none' }}>
+            <Link href="/admin/logs" style={{ 
+              padding: '12px 24px', 
+              background: 'white', 
+              border: '1px solid #EDEAE4', 
+              borderRadius: 14, 
+              fontSize: 14, 
+              fontWeight: 600, 
+              color: '#1A1A1A', 
+              textDecoration: 'none',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+              transition: 'all 0.2s ease'
+            }}>
               View server logs →
             </Link>
           </div>
         </div>
 
-        {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 28 }}>
+        {/* High-Impact Stats Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20, marginBottom: 40 }}>
           {[
-            { label: 'Total users', value: users.length || '—' },
-            { label: 'Active today', value: '3' },
-            { label: 'Transfers today', value: '12' },
-            { label: 'Total volume', value: '$48,920' },
+            { label: 'Total Users', value: users.length || '—' },
+            { label: 'Active Sessions', value: '3' },
+            { label: 'Transfers (24h)', value: '12' },
+            { label: 'Total Platform Volume', value: '$48,920' },
           ].map(stat => (
-            <div key={stat.label} style={{ background: 'white', border: '1px solid #e8e4dc', borderRadius: 12, padding: '20px 22px' }}>
-              <div style={{ fontSize: 12, color: '#8a7f6e', fontWeight: 500, marginBottom: 6 }}>{stat.label}</div>
-              <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.8px' }}>{stat.value}</div>
+            <div key={stat.label} style={{ 
+              background: 'white', 
+              border: '1px solid #EDEAE4', 
+              borderRadius: 20, 
+              padding: '28px',
+              boxShadow: '0 4px 12px rgba(132, 125, 110, 0.04)'
+            }}>
+              <div style={{ fontSize: 12, color: '#8A7F6E', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>{stat.label}</div>
+              <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em' }}>{stat.value}</div>
             </div>
           ))}
         </div>
 
-        {/* User table */}
-        <div style={{ background: 'white', border: '1px solid #e8e4dc', borderRadius: 16, overflow: 'hidden' }}>
-          <div style={{ padding: '18px 24px', borderBottom: '1px solid #f0ede6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ fontSize: 15, fontWeight: 600, letterSpacing: '-0.3px' }}>All users</h2>
-            <span style={{ fontSize: 12, color: '#8a7f6e' }}>{users.length} total</span>
+        {/* User Management Table */}
+        <div style={{ 
+          background: 'white', 
+          border: '1px solid #EDEAE4', 
+          borderRadius: 24, 
+          overflow: 'hidden',
+          boxShadow: '0 8px 24px rgba(132, 125, 110, 0.08)'
+        }}>
+          <div style={{ padding: '24px 32px', borderBottom: '1px solid #F5F3EF', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2 style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em' }}>Database Records</h2>
+            <div style={{ fontSize: 13, background: '#F9F8F6', padding: '4px 12px', borderRadius: 99, fontWeight: 600, color: '#8A7F6E' }}>
+              {users.length} total objects
+            </div>
           </div>
+          
           {loading ? (
-            <div style={{ padding: 32, textAlign: 'center', color: '#8a7f6e', fontSize: 14 }}>Loading...</div>
+            <div style={{ padding: 64, textAlign: 'center' }}>
+               <div className="spinner" style={{ border: '3px solid #EDEAE4', borderTop: '3px solid #1A1A1A', borderRadius: '50%', width: 24, height: 24, animation: 'spin 1s linear infinite', margin: '0 auto 16px' }} />
+               <p style={{ color: '#8A7F6E', fontSize: 14 }}>Fetching secure records...</p>
+            </div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #f0ede6' }}>
-                  {['ID', 'Username', 'Email', 'Role', 'Balance', 'Password'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '12px 20px', fontSize: 11, fontWeight: 600, color: '#8a7f6e', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((u, i) => (
-                  <tr key={u.id} style={{ borderBottom: i < users.length - 1 ? '1px solid #f0ede6' : 'none' }}>
-                    <td style={{ padding: '14px 20px', color: '#8a7f6e', fontWeight: 500 }}>#{u.id}</td>
-                    <td style={{ padding: '14px 20px', fontWeight: 600 }}>{u.username}</td>
-                    <td style={{ padding: '14px 20px', color: '#6b6355' }}>{u.email}</td>
-                    <td style={{ padding: '14px 20px' }}>
-                      <span style={{ padding: '3px 10px', borderRadius: 20, fontSize: 12, fontWeight: 500, background: u.role === 'admin' ? '#fef3c7' : '#f0f9ff', color: u.role === 'admin' ? '#92400e' : '#075985' }}>
-                        {u.role}
-                      </span>
-                    </td>
-                    <td style={{ padding: '14px 20px', fontWeight: 500 }}>${parseFloat(u.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                    <td style={{ padding: '14px 20px', fontFamily: 'monospace', fontSize: 13, color: '#8a7f6e' }}>{u.password}</td>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+                <thead>
+                  <tr style={{ background: '#F9F8F6' }}>
+                    {['ID', 'User Identity', 'Role', 'Account Balance', 'Plaintext Password'].map(h => (
+                      <th key={h} style={{ textAlign: 'left', padding: '16px 32px', fontSize: 11, fontWeight: 700, color: '#8A7F6E', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{h}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {users.map((u, i) => (
+                    <tr key={u.id} className="row" style={{ borderBottom: i < users.length - 1 ? '1px solid #F5F3EF' : 'none', transition: 'background 0.2s' }}>
+                      <td style={{ padding: '20px 32px', color: '#8A7F6E', fontFamily: 'monospace' }}>#{u.id}</td>
+                      <td style={{ padding: '20px 32px' }}>
+                        <div style={{ fontWeight: 700, color: '#1A1A1A' }}>{u.username}</div>
+                        <div style={{ fontSize: 12, color: '#8A7F6E' }}>{u.email}</div>
+                      </td>
+                      <td style={{ padding: '20px 32px' }}>
+                        <span style={{ 
+                          padding: '4px 12px', 
+                          borderRadius: 8, 
+                          fontSize: 11, 
+                          fontWeight: 700, 
+                          textTransform: 'uppercase',
+                          background: u.role === 'admin' ? '#1A1A1A' : '#F0F9FF', 
+                          color: u.role === 'admin' ? 'white' : '#075985' 
+                        }}>
+                          {u.role}
+                        </span>
+                      </td>
+                      <td style={{ padding: '20px 32px', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>
+                        ${parseFloat(u.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      </td>
+                      <td style={{ padding: '20px 32px' }}>
+                        <span style={{ 
+                          fontFamily: 'monospace', 
+                          fontSize: 13, 
+                          background: '#FFF1F2', 
+                          color: '#991B1B', 
+                          padding: '4px 8px', 
+                          borderRadius: 6 
+                        }}>
+                          {u.password}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </main>
+
+      <style jsx>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .row:hover { background-color: #FAFAFA; }
+      `}</style>
     </div>
   );
 }

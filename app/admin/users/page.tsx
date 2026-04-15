@@ -40,59 +40,79 @@ export default function AdminUsers() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#050507] text-slate-300">
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#F9F8F6', fontFamily: 'Inter, sans-serif', color: '#1A1A1A' }}>
       <Sidebar />
 
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main style={{ flex: 1, padding: '48px 64px', overflowY: 'auto', maxWidth: '1200px', margin: '0 auto' }}>
         {/* Header */}
-        <header className="mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
-          <div className="flex justify-between items-center">
+        <header style={{ marginBottom: 40 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
             <div>
-              <h1 className="text-3xl font-bold tracking-tighter text-white uppercase italic">User Management</h1>
-              <p className="text-xs font-mono text-slate-500 mt-1">// MODULE: AUTH_BYPASS_SEARCH // DB: EXPOSED</p>
+              <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 8 }}>User Management</h1>
+              <p style={{ fontSize: 14, color: '#8A7F6E', fontFamily: 'monospace' }}>// MODULE: AUTH_BYPASS_SEARCH // DB: EXPOSED</p>
             </div>
-            <div className="flex gap-3">
-              <Link href="/admin" className="px-3 py-1.5 rounded border border-slate-800 text-[10px] font-bold uppercase tracking-widest hover:bg-slate-800 transition-all">
-                Admin Root
-              </Link>
-            </div>
+            <Link href="/admin" style={{ 
+              padding: '12px 24px', 
+              background: 'white', 
+              border: '1px solid #EDEAE4', 
+              borderRadius: 14, 
+              fontSize: 13, 
+              fontWeight: 600, 
+              color: '#1A1A1A', 
+              textDecoration: 'none',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
+            }}>
+              Admin Root
+            </Link>
           </div>
         </header>
 
-        {/* SQLi Vulnerability Dossier */}
-        <section className="mb-8 rounded-2xl border border-orange-900/30 bg-orange-950/5 p-6 backdrop-blur-md animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded bg-orange-500 text-black text-[9px] font-black">CRITICAL VULN</span>
-              <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest">SQL Injection + Data Exposure</span>
-            </div>
+        {/* SQLi Vulnerability Dossier - The "Warning" Card */}
+        <section style={{ 
+          marginBottom: 32, 
+          borderRadius: 24, 
+          border: '1px solid #FDE68A', 
+          background: '#FFFBEB', 
+          padding: '32px',
+          boxShadow: '0 4px 20px rgba(251, 191, 36, 0.05)'
+        }}>
+          <div style={{ display: 'flex', itemsCenter: 'center', gap: 12, marginBottom: 16 }}>
+            <span style={{ px: 8, py: 4, borderRadius: 8, background: '#F59E0B', color: 'white', fontSize: 10, fontWeight: 900, padding: '4px 8px' }}>CRITICAL VULN</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#92400E', textTransform: 'uppercase', letterSpacing: '0.05em' }}>SQL Injection + Data Exposure</span>
           </div>
           
-          <p className="text-xs text-slate-400 leading-relaxed mb-6 font-mono">
-            Endpoint <code className="text-orange-400">/api/search?query=</code> performs direct string concatenation. 
-            Resulting in <span className="text-white underline">Full Database Pivot</span> potential. 
-            Database also stores <span className="text-red-500 font-bold">Plaintext Credentials</span>.
+          <p style={{ fontSize: 14, color: '#92400E', lineHeight: 1.6, marginBottom: 24, opacity: 0.9 }}>
+            The search endpoint performs direct string concatenation. This allows for <strong>Full Database Pivot</strong>. 
+            Sensitive credentials are currently stored in <strong>Plaintext</strong>.
           </p>
 
-          <div className="space-y-4">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <button 
               onClick={() => setShowPayloads(!showPayloads)}
-              className="text-[10px] font-bold text-orange-500/70 hover:text-orange-400 transition-colors uppercase tracking-[0.2em]"
+              style={{ background: 'none', border: 'none', textAlign: 'left', fontSize: 11, fontWeight: 800, color: '#B45309', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em' }}
             >
               {showPayloads ? '[ - ] Collapse Payloads' : '[ + ] Expand Injection Payloads'}
             </button>
 
             {showPayloads && (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 animate-in zoom-in-95 duration-300">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
                 {payloads.map(p => (
                   <button
                     key={p.val}
                     onClick={() => inject(p.val)}
-                    className={`px-2 py-2 rounded border text-[9px] font-mono transition-all ${
-                      activePayload === p.val 
-                        ? "bg-orange-500/20 border-orange-500 text-orange-300" 
-                        : "bg-black/40 border-slate-800 text-slate-500 hover:border-slate-600"
-                    }`}
+                    style={{ 
+                      padding: '12px', 
+                      borderRadius: 12, 
+                      border: '1px solid',
+                      fontSize: 11,
+                      fontFamily: 'monospace',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      textAlign: 'left',
+                      background: activePayload === p.val ? '#F59E0B' : 'white',
+                      borderColor: activePayload === p.val ? '#F59E0B' : '#FDE68A',
+                      color: activePayload === p.val ? 'white' : '#92400E'
+                    }}
                   >
                     ⚡ {p.label}
                   </button>
@@ -100,61 +120,83 @@ export default function AdminUsers() {
               </div>
             )}
             
-            <div className="flex items-center gap-3 p-3 bg-black/40 border border-slate-800 rounded-lg">
-              <span className="text-lg">🚩</span>
-              <span className="text-[10px] font-mono text-slate-400">
-                HINT: Pivot to <code className="text-blue-400">admin_notes</code> for the system secret.
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px', background: 'rgba(255,255,255,0.5)', borderRadius: 16, border: '1px solid rgba(251, 191, 36, 0.2)' }}>
+              <span style={{ fontSize: 18 }}>🚩</span>
+              <span style={{ fontSize: 12, color: '#92400E', fontWeight: 500 }}>
+                HINT: Pivot to <code style={{ color: '#2563EB', fontWeight: 700 }}>admin_notes</code> for system secrets.
               </span>
             </div>
           </div>
         </section>
 
         {/* Search Interface */}
-        <section className="grid grid-cols-1 gap-6 mb-12">
-          <div className="p-6 rounded-2xl bg-slate-900/30 border border-slate-800">
-            <div className="flex gap-4">
-              <div className="relative flex-1 group">
-                <input
-                  type="text"
-                  placeholder="Intercept Query..."
-                  value={query}
-                  onChange={e => setQuery(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                  className="w-full bg-black border border-slate-800 rounded-xl py-4 px-5 font-mono text-xs text-orange-400 focus:outline-none focus:border-orange-500/50 transition-all shadow-inner"
-                />
-              </div>
+        <section style={{ marginBottom: 48 }}>
+          <div style={{ 
+            padding: '32px', 
+            borderRadius: 24, 
+            background: 'white', 
+            border: '1px solid #EDEAE4', 
+            boxShadow: '0 4px 12px rgba(132, 125, 110, 0.04)' 
+          }}>
+            <div style={{ display: 'flex', gap: 16 }}>
+              <input
+                type="text"
+                placeholder="Intercept Query..."
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                style={{ 
+                  flex: 1, 
+                  background: '#F9F8F6', 
+                  border: '1px solid #EDEAE4', 
+                  borderRadius: 16, 
+                  padding: '16px 20px', 
+                  fontFamily: 'monospace', 
+                  fontSize: 14, 
+                  color: '#1A1A1A',
+                  outline: 'none'
+                }}
+              />
               <button 
                 onClick={handleSearch}
-                className="px-8 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold uppercase tracking-[0.2em] transition-all shadow-lg shadow-blue-900/20"
+                style={{ 
+                  padding: '0 32px', 
+                  background: '#1A1A1A', 
+                  color: 'white', 
+                  borderRadius: 16, 
+                  fontSize: 14, 
+                  fontWeight: 700, 
+                  border: 'none', 
+                  cursor: 'pointer' 
+                }}
               >
                 Execute
               </button>
             </div>
 
             {searched && (
-              <div className="mt-8 animate-in fade-in slide-in-from-top-2 duration-500">
-                <div className="flex justify-between items-center mb-4 px-2">
-                  <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Intercepted Results</h3>
-                  <span className="text-[10px] font-mono text-orange-500/70">Rows: {results.length}</span>
+              <div style={{ marginTop: 32 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+                  <h3 style={{ fontSize: 12, fontWeight: 700, color: '#8A7F6E', textTransform: 'uppercase' }}>Intercepted Results</h3>
+                  <span style={{ fontSize: 12, color: '#8A7F6E', fontFamily: 'monospace' }}>Rows: {results.length}</span>
                 </div>
                 
-                <div className="rounded-xl border border-slate-800 bg-black/20 overflow-hidden">
-                  <table className="w-full text-left text-[11px] font-mono">
-                    <thead className="bg-slate-900/50 text-slate-600 border-b border-slate-800">
+                <div style={{ borderRadius: 20, border: '1px solid #F5F3EF', overflow: 'hidden' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, fontFamily: 'monospace' }}>
+                    <thead style={{ background: '#F9F8F6', borderBottom: '1px solid #F5F3EF' }}>
                       <tr>
-                        <th className="px-4 py-3">RAW_01</th>
-                        <th className="px-4 py-3 text-blue-400/70">RAW_02</th>
-                        <th className="px-4 py-3 text-red-400/70">RAW_03</th>
-                        <th className="px-4 py-3">RAW_04</th>
+                        {['RAW_01', 'RAW_02', 'RAW_03', 'RAW_04'].map(h => (
+                          <th key={h} style={{ padding: '12px 20px', textAlign: 'left', color: '#8A7F6E', fontSize: 11 }}>{h}</th>
+                        ))}
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800/30">
+                    <tbody>
                       {results.map((r: any, i: number) => (
-                        <tr key={i} className="hover:bg-blue-500/[0.02]">
-                          <td className="px-4 py-3 text-slate-500">{r.id ?? r[0]}</td>
-                          <td className="px-4 py-3 text-blue-400">{r.username ?? r[1]}</td>
-                          <td className="px-4 py-3 text-red-500 font-bold">{r.password ?? r[2]}</td>
-                          <td className="px-4 py-3 text-slate-400">{r.role ?? r[3]}</td>
+                        <tr key={i} style={{ borderBottom: '1px solid #F9F8F6' }}>
+                          <td style={{ padding: '12px 20px', color: '#8A7F6E' }}>{r.id ?? r[0]}</td>
+                          <td style={{ padding: '12px 20px', color: '#2563EB', fontWeight: 600 }}>{r.username ?? r[1]}</td>
+                          <td style={{ padding: '12px 20px', color: '#DC2626', fontWeight: 700 }}>{r.password ?? r[2]}</td>
+                          <td style={{ padding: '12px 20px', color: '#1A1A1A' }}>{r.role ?? r[3]}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -165,46 +207,52 @@ export default function AdminUsers() {
           </div>
         </section>
 
-        {/* Master Database Exposure */}
-        <section className="rounded-2xl border border-slate-800 bg-slate-900/10 overflow-hidden animate-in fade-in delay-500">
-          <div className="px-6 py-4 bg-slate-900/40 border-b border-slate-800 flex justify-between items-center">
-            <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Master User Table [INTERNAL_ONLY]</h2>
-            <span className="text-[9px] font-bold text-red-500 uppercase animate-pulse italic">Encryption: Disabled</span>
+        {/* Master Database Table */}
+        <section style={{ 
+          background: 'white', 
+          border: '1px solid #EDEAE4', 
+          borderRadius: 24, 
+          overflow: 'hidden',
+          boxShadow: '0 8px 24px rgba(132, 125, 110, 0.08)'
+        }}>
+          <div style={{ padding: '24px 32px', borderBottom: '1px solid #F5F3EF', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2 style={{ fontSize: 16, fontWeight: 700 }}>Master User Table</h2>
+            <span style={{ fontSize: 11, fontWeight: 800, color: '#DC2626', textTransform: 'uppercase' }}>Encryption: Disabled</span>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-[11px]">
-              <thead className="bg-slate-950 text-slate-600 font-mono">
-                <tr>
-                  <th className="px-6 py-4 font-medium uppercase tracking-tighter">UID</th>
-                  <th className="px-6 py-4 font-medium uppercase tracking-tighter">Username</th>
-                  <th className="px-6 py-4 font-medium uppercase tracking-tighter text-red-400">Cleartext Pass</th>
-                  <th className="px-6 py-4 font-medium uppercase tracking-tighter">Identity</th>
-                  <th className="px-6 py-4 font-medium uppercase tracking-tighter text-center">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/50">
-                {users.map((u: any) => (
-                  <tr key={u.id} className="group hover:bg-slate-800/30 transition-colors">
-                    <td className="px-6 py-4 font-mono text-slate-500 text-[10px]">#{u.id}</td>
-                    <td className="px-6 py-4 font-bold text-slate-200">{u.username}</td>
-                    <td className="px-6 py-4">
-                      <span className="px-2 py-1 rounded bg-red-500/5 border border-red-500/20 text-red-400 font-mono group-hover:bg-red-500/10 transition-all">
-                        {u.password}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 font-mono text-slate-500 text-[10px]">{u.email}</td>
-                    <td className="px-6 py-4 text-center">
-                      <span className={`px-2 py-0.5 rounded-[4px] text-[9px] font-black uppercase ${
-                        u.role === 'admin' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 'bg-blue-500/10 text-blue-500 border border-blue-500/20'
-                      }`}>
-                        {u.role}
-                      </span>
-                    </td>
-                  </tr>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+            <thead style={{ background: '#F9F8F6' }}>
+              <tr>
+                {['UID', 'Alias', 'Credentials', 'Identity'].map(h => (
+                  <th key={h} style={{ textAlign: 'left', padding: '16px 32px', fontSize: 11, fontWeight: 700, color: '#8A7F6E', textTransform: 'uppercase' }}>{h}</th>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((u: any) => (
+                <tr key={u.id} style={{ borderBottom: '1px solid #F5F3EF' }}>
+                  <td style={{ padding: '20px 32px', color: '#8A7F6E', fontFamily: 'monospace', fontSize: 12 }}>#{u.id}</td>
+                  <td style={{ padding: '20px 32px' }}>
+                    <div style={{ fontWeight: 700 }}>{u.username}</div>
+                    <div style={{ fontSize: 12, color: '#8A7F6E' }}>{u.email}</div>
+                  </td>
+                  <td style={{ padding: '20px 32px' }}>
+                    <span style={{ padding: '6px 10px', borderRadius: 8, background: '#FEF2F2', color: '#B91C1C', fontFamily: 'monospace', fontSize: 13, border: '1px solid #FEE2E2' }}>
+                      {u.password}
+                    </span>
+                  </td>
+                  <td style={{ padding: '20px 32px' }}>
+                    <span style={{ 
+                      padding: '4px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
+                      background: u.role === 'admin' ? '#1A1A1A' : '#EFF6FF', 
+                      color: u.role === 'admin' ? 'white' : '#1E40AF' 
+                    }}>
+                      {u.role}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </section>
       </main>
     </div>
