@@ -6,30 +6,53 @@ export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('Authorization');
   const token = authHeader?.replace('Bearer ', '');
 
-  // 🟠 VULNERABLE: Token not properly verified; decode-only fallback in verifyToken
+  // 🟠 VULNERABLE: decode-only (no verification)
   const decoded: any = getUserFromToken(token);
 
-  // 🟠 VULNERABLE: Also accepts session cookie as fallback — no real validation
-  const sessionCookie = req.cookies.get('session')?.value;
-  const userId = decoded?.id || sessionCookie;
+  console.log("TOKEN:", token);
+  console.log("DECODED:", decoded);
+
+  // 🔴 FORCE JWT USAGE (remove cookie fallback for clarity)
+  const userId = decoded?.id;
 
   if (!userId) {
-    return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json(
+      { success: false, message: 'Unauthorized (no id in token)' },
+      { status: 401 }
+    );
   }
 
   try {
     const db = await getDb();
 
-    // 🔴 VULNERABLE: userId not validated, IDOR possible via cookie manipulation
-    const query = `SELECT id, username, email, role, balance, account_number, created_at FROM users WHERE id=${userId}`;
+    // 🔴 VULNERABLE: SQL Injection + IDOR
+    const query = `
+      SELECT id, username, email, role, balance, account_number, created_at 
+      FROM users 
+      WHERE id=${userId}
+    `;
+
+    console.log("QUERY:", query);
+
     const [rows]: any = await db.query(query);
 
     if (!rows || rows.length === 0) {
-      return NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });
+      return NextResponse.json(
+        { success: false, message: 'User not found' },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json({ success: true, user: rows[0] });
+    return NextResponse.json({
+      success: true,
+      user: rows[0],
+    });
+
   } catch (err: any) {
-    return NextResponse.json({ success: false, message: err.message, stack: err.stack }, { status: 500 });
+    return NextResponse.json({
+      success: false,
+      message: err.message,
+      stack: err.stack,
+    }, { status: 500 });
   }
 }

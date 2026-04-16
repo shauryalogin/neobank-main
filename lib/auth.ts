@@ -23,7 +23,18 @@ export function verifyToken(token: string) {
   }
 }
 
-export function getUserFromToken(token: string | undefined) {
+export function getUserFromToken(token?: string) {
   if (!token) return null;
-  return verifyToken(token);
+
+  try {
+    // 🟠 VULNERABLE: decode only, no signature verification
+    const payloadPart = token.split('.')[1];
+    const decoded = JSON.parse(
+      Buffer.from(payloadPart, 'base64').toString()
+    );
+
+    return decoded;
+  } catch (err) {
+    return null;
+  }
 }

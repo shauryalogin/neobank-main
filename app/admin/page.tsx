@@ -9,11 +9,19 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/admin/users')
-      .then(r => r.json())
-      .then(data => { if (data.users) setUsers(data.users); })
-      .finally(() => setLoading(false));
-  }, []);
+  const token = localStorage.getItem('token');
+
+  fetch('/api/admin/users', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then(r => r.json())
+    .then(data => { 
+      if (data.users) setUsers(data.users); 
+    })
+    .finally(() => setLoading(false));
+}, []);
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F9F8F6', fontFamily: 'Inter, sans-serif', color: '#1A1A1A' }}>
@@ -50,7 +58,7 @@ export default function AdminPage() {
             { label: 'Total Users', value: users.length || '—' },
             { label: 'Active Sessions', value: '3' },
             { label: 'Transfers (24h)', value: '12' },
-            { label: 'Total Platform Volume', value: '$48,920' },
+            { label: 'Total Platform Volume', value: '$100,000' },
           ].map(stat => (
             <div key={stat.label} style={{ 
               background: 'white', 
