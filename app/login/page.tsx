@@ -7,6 +7,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // New state for visibility
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -43,11 +44,13 @@ export default function LoginPage() {
     label: { display: 'block', fontSize: 13, fontWeight: 500, color: '#6b6355', marginBottom: 6 } as any,
     input: { width: '100%', padding: '12px 14px', border: '1px solid #d4d0c8', borderRadius: 8, fontSize: 14, background: 'white', outline: 'none', fontFamily: 'Inter, sans-serif', boxSizing: 'border-box' } as any,
     btn: { width: '100%', padding: '13px', borderRadius: 8, background: '#1a1a1a', color: 'white', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', letterSpacing: '-0.2px' } as any,
+    // Style for the container and the toggle button
+    inputWrapper: { position: 'relative', width: '100%' } as any,
+    toggleBtn: { position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#8a7f6e', fontSize: 12, fontWeight: 600, cursor: 'pointer', outline: 'none' } as any,
   };
 
   return (
     <div style={s.page}>
-      {/* Left — form */}
       <div style={s.left}>
         <div style={s.form}>
           <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 48, textDecoration: 'none', color: '#1a1a1a' }}>
@@ -71,13 +74,33 @@ export default function LoginPage() {
               <label style={s.label}>Username</label>
               <input style={s.input} type="text" placeholder="Enter your username" value={username} onChange={e => setUsername(e.target.value)} required />
             </div>
+            
             <div style={{ marginBottom: 28 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                 <label style={s.label}>Password</label>
                 <a href="#" style={{ fontSize: 13, color: '#8a7f6e', textDecoration: 'none' }}>Forgot password?</a>
               </div>
-              <input style={s.input} type="password" placeholder="Enter your password" value={password} onChange={e => setPassword(e.target.value)} required />
+              
+              {/* Wrapped input to position the toggle button */}
+              <div style={s.inputWrapper}>
+                <input 
+                  style={{ ...s.input, paddingRight: 60 }} // Extra padding so text doesn't overlap button
+                  type={showPassword ? "text" : "password"} 
+                  placeholder="Enter your password" 
+                  value={password} 
+                  onChange={e => setPassword(e.target.value)} 
+                  required 
+                />
+                <button 
+                  type="button" 
+                  style={s.toggleBtn} 
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
             </div>
+
             <button style={{ ...s.btn, opacity: loading ? 0.6 : 1 }} type="submit" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
@@ -91,7 +114,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right — brand panel */}
-      <div style={s.right} className="hidden lg:flex lg:flex-col">
+      <div style={s.right}>
         <div style={{ marginBottom: 'auto', paddingBottom: 64 }}>
           <div style={{ fontFamily: 'DM Serif Display, serif', fontSize: 36, color: 'white', lineHeight: 1.2, letterSpacing: '-1px', marginBottom: 24 }}>
             Your money,<br /><em>your control.</em>

@@ -10,17 +10,24 @@ function b64urlEncode(obj: object) {
     .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 }
 
-async function signJwt(payload: object, secret: string): Promise<string> {
-  const header  = { alg: 'HS256', typ: 'JWT' };
-  const unsigned = `${b64urlEncode(header)}.${b64urlEncode(payload)}`;
-  const key = await crypto.subtle.importKey(
-    'raw', new TextEncoder().encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
-  );
-  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(unsigned));
-  const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sig)))
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-  return `${unsigned}.${sigB64}`;
+function signJwt(payload: object, secret: string) {
+  const header = { alg: "HS256", typ: "JWT" };
+
+  const encode = (obj: any) =>
+    btoa(JSON.stringify(obj))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=/g, "");
+
+  const unsigned = `${encode(header)}.${encode(payload)}`;
+
+  // fake "signature" (lab-safe, no crypto dependency)
+  const signature = btoa(secret + "." + unsigned)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=/g, "");
+
+  return `${unsigned}.${signature}`;
 }
 
 function decodePayload(token: string): any {
@@ -85,38 +92,31 @@ export default function ProfilePage() {
 
   // ── forge + call /api/user ──────────────────────────────────────────────
   const forgeAndFetch = async () => {
-    if (parseError) return;
-    setStage('forging');
-    setForgedUser(null);
-    setApiError('');
-    try {
-      const payload = JSON.parse(editedPayload);
-      const forged  = await signJwt(payload, secret);
+  console.log("1. clicked");
 
-      setForgedToken(forged);
-      localStorage.setItem('token', forged);
-      document.cookie = `token=${forged}; path=/`;
-      setToken(forged);
-      window.location.href = '/admin';
+  try {
+    const payload = JSON.parse(editedPayload);
+    console.log("2. payload parsed", payload);
 
+    console.log("crypto:", crypto);
+console.log("window.crypto:", window.crypto);
+console.log("subtle:", window.crypto?.subtle);
+    const forged = await signJwt(payload, secret);
+    console.log("3. token created", forged);
 
-      const res  = await fetch('/api/user', {
-        headers: { Authorization: `Bearer ${forged}` },
-      });
-      const data = await res.json();
+    const res = await fetch('/api/user', {
+      headers: { Authorization: `Bearer ${forged}` },
+    });
 
-      if (data.success) {
-        setForgedUser(data.user);
-        setStage('success');
-      } else {
-        setApiError(data.message || 'API rejected the token');
-        setStage('error');
-      }
-    } catch (e: any) {
-      setApiError(e.message);
-      setStage('error');
-    }
-  };
+    console.log("4. request sent");
+
+    const data = await res.json();
+    console.log("5. response received", data);
+
+  } catch (err) {
+    console.log("ERROR:", err);
+  }
+};
 
   const reset = () => {
     const pl = decodePayload(token);

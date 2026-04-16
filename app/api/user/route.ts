@@ -4,10 +4,17 @@ import { getUserFromToken } from '../../../lib/auth';
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('Authorization');
-  const token = authHeader?.replace('Bearer ', '');
+let token = authHeader?.replace('Bearer ', '');
+console.log("SECRET:", process.env.JWT_SECRET);
+if (!token) {
+  token = req.cookies.get('token')?.value;
+}
 
-  // 🟠 VULNERABLE: decode-only (no verification)
-  const decoded: any = getUserFromToken(token);
+console.log("AUTH HEADER:", authHeader);
+console.log("TOKEN FROM HEADER:", token);
+console.log("COOKIE TOKEN:", req.cookies.get('token')?.value);
+
+const decoded: any = getUserFromToken(token);
 
   console.log("TOKEN:", token);
   console.log("DECODED:", decoded);

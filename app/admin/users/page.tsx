@@ -76,8 +76,15 @@ export default function AdminUsers() {
           padding: '32px',
           boxShadow: '0 4px 20px rgba(251, 191, 36, 0.05)'
         }}>
-          <div style={{ display: 'flex', itemsCenter: 'center', gap: 12, marginBottom: 16 }}>
-            <span style={{ px: 8, py: 4, borderRadius: 8, background: '#F59E0B', color: 'white', fontSize: 10, fontWeight: 900, padding: '4px 8px' }}>CRITICAL VULN</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+            <span style={{ 
+    padding: '4px 8px', // Replaced px/py with standard padding
+    borderRadius: 8, 
+    background: '#F59E0B', 
+    color: 'white', 
+    fontSize: 10, 
+    fontWeight: 900 
+  }}>CRITICAL VULN</span>
             <span style={{ fontSize: 12, fontWeight: 700, color: '#92400E', textTransform: 'uppercase', letterSpacing: '0.05em' }}>SQL Injection + Data Exposure</span>
           </div>
           

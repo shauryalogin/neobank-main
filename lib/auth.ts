@@ -27,14 +27,18 @@ export function getUserFromToken(token?: string) {
   if (!token) return null;
 
   try {
-    // 🟠 VULNERABLE: decode only, no signature verification
     const payloadPart = token.split('.')[1];
+
+    const base64 = payloadPart
+      .replace(/-/g, '+')
+      .replace(/_/g, '/');
+
     const decoded = JSON.parse(
-      Buffer.from(payloadPart, 'base64').toString()
+      Buffer.from(base64, 'base64').toString()
     );
 
     return decoded;
-  } catch (err) {
+  } catch {
     return null;
   }
 }
